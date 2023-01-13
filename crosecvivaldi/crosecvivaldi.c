@@ -484,28 +484,57 @@ enum ps2_action_key {
 	PS2_KEY_MENU,
 };
 
-static const enum ps2_action_key ps2_enum_val[] = {
-	[TK_ABSENT] = PS2_KEY_ABSENT,
-	[TK_BACK] = PS2_KEY_BACK,
-	[TK_FORWARD] = PS2_KEY_FORWARD,
-	[TK_REFRESH] = PS2_KEY_REFRESH,
-	[TK_FULLSCREEN] = PS2_KEY_FULLSCREEN,
-	[TK_OVERVIEW] = PS2_KEY_OVERVIEW,
-	[TK_BRIGHTNESS_DOWN] = PS2_KEY_BRIGHTNESS_DOWN,
-	[TK_BRIGHTNESS_UP] = PS2_KEY_BRIGHTNESS_UP,
-	[TK_VOL_MUTE] = PS2_KEY_VOL_MUTE,
-	[TK_VOL_DOWN] = PS2_KEY_VOL_DOWN,
-	[TK_VOL_UP] = PS2_KEY_VOL_UP,
-	[TK_SNAPSHOT] = PS2_KEY_SNAPSHOT,
-	[TK_PRIVACY_SCRN_TOGGLE] = PS2_KEY_PRIVACY_SCRN_TOGGLE,
-	[TK_KBD_BKLIGHT_DOWN] = PS2_KEY_KBD_BKLIGHT_DOWN,
-	[TK_KBD_BKLIGHT_UP] = PS2_KEY_KBD_BKLIGHT_UP,
-	[TK_PLAY_PAUSE] = PS2_KEY_PLAY_PAUSE,
-	[TK_NEXT_TRACK] = PS2_KEY_NEXT_TRACK,
-	[TK_PREV_TRACK] = PS2_KEY_PREV_TRACK,
-	[TK_KBD_BKLIGHT_TOGGLE] = PS2_KEY_KBD_BKLIGHT_TOGGLE,
-	[TK_MICMUTE] = PS2_KEY_MICMUTE,
-	[TK_MENU] = PS2_KEY_MENU,
+#define KEYMAP(scancode, keycode) (((uint32_t)(scancode) << 16) | (keycode & 0xFFFF))
+#define SCANCODE(keymap) ((keymap >> 16) & 0xFFFF)
+
+#define KEY_BACK		158	/* AC Back */
+#define KEY_FORWARD		159	/* AC Forward */
+#define KEY_REFRESH		173	/* AC Refresh */
+#define KEY_FULL_SCREEN		0x174	/* AC View Toggle */
+#define KEY_SCALE		120	/* AL Compiz Scale (Expose) */
+#define KEY_MUTE		113
+#define KEY_VOLUMEDOWN		114
+#define KEY_VOLUMEUP		115
+#define KEY_NEXTSONG		163
+#define KEY_PLAYPAUSE		164
+#define KEY_PREVIOUSSONG	165
+#define KEY_SYSRQ		99
+#define KEY_BRIGHTNESSDOWN	224
+#define KEY_BRIGHTNESSUP	225
+#define KEY_KBDILLUMTOGGLE	228
+#define KEY_KBDILLUMDOWN	229
+#define KEY_KBDILLUMUP		230
+#define KEY_PRIVACY_SCREEN_TOGGLE	0x279
+#define KEY_MICMUTE		248	/* Mute / unmute the microphone */
+#define KEY_CONTROLPANEL		0x243	/* AL Control Panel */
+
+/*
+ * Possible keymaps for action keys in the top row. This is a superset of
+ * possible keys. Individual keyboards will have a subset of these keys.
+ * The scancodes are true / condensed 1 byte scancodes from set-1
+ */
+static const uint32_t action_keymaps[] = {
+	[PS2_KEY_BACK] = KEYMAP(0xea, KEY_BACK),		/* e06a */
+	[PS2_KEY_FORWARD] = KEYMAP(0xe9, KEY_FORWARD),		/* e069 */
+	[PS2_KEY_REFRESH] = KEYMAP(0xe7, KEY_REFRESH),		/* e067 */
+	[PS2_KEY_FULLSCREEN] = KEYMAP(0x91, KEY_FULL_SCREEN),	/* e011 */
+	[PS2_KEY_OVERVIEW] = KEYMAP(0x92, KEY_SCALE),		/* e012 */
+	[PS2_KEY_VOL_MUTE] = KEYMAP(0xa0, KEY_MUTE),		/* e020 */
+	[PS2_KEY_VOL_DOWN] = KEYMAP(0xae, KEY_VOLUMEDOWN),	/* e02e */
+	[PS2_KEY_VOL_UP] = KEYMAP(0xb0, KEY_VOLUMEUP),		/* e030 */
+	[PS2_KEY_PLAY_PAUSE] = KEYMAP(0x9a, KEY_PLAYPAUSE),	/* e01a */
+	[PS2_KEY_NEXT_TRACK] = KEYMAP(0x99, KEY_NEXTSONG),	/* e019 */
+	[PS2_KEY_PREV_TRACK] = KEYMAP(0x90, KEY_PREVIOUSSONG),	/* e010 */
+	[PS2_KEY_SNAPSHOT] = KEYMAP(0x93, KEY_SYSRQ),		/* e013 */
+	[PS2_KEY_BRIGHTNESS_DOWN] = KEYMAP(0x94, KEY_BRIGHTNESSDOWN),	/* e014 */
+	[PS2_KEY_BRIGHTNESS_UP] = KEYMAP(0x95, KEY_BRIGHTNESSUP),	/* e015 */
+	[PS2_KEY_KBD_BKLIGHT_DOWN] = KEYMAP(0x97, KEY_KBDILLUMDOWN),	/* e017 */
+	[PS2_KEY_KBD_BKLIGHT_UP] = KEYMAP(0x98, KEY_KBDILLUMUP),	/* e018 */
+	[PS2_KEY_PRIVACY_SCRN_TOGGLE] = KEYMAP(0x96,			/* e016 */
+					  KEY_PRIVACY_SCREEN_TOGGLE),
+	[PS2_KEY_MICMUTE] = KEYMAP(0x9b, KEY_MICMUTE),			/* e01b */
+	[PS2_KEY_KBD_BKLIGHT_TOGGLE] = KEYMAP(0x9e, KEY_KBDILLUMTOGGLE),	/* e01e */
+	[PS2_KEY_MENU] = KEYMAP(0xdd, KEY_CONTROLPANEL),	/* e0d5 */
 };
 
 NTSTATUS
@@ -553,7 +582,11 @@ Status
 
 		pDevice->functionRowCount = keybdConfig.num_top_row_keys;
 		for (int i = 0; i < pDevice->functionRowCount; i++) {
-			pDevice->functionRowKeys[i] = ps2_enum_val[keybdConfig.action_keys[i]];
+			UINT8 key = keybdConfig.action_keys[i];
+			if (key < sizeof(action_keymaps) / sizeof(action_keymaps[0]))
+				pDevice->functionRowKeys[i] = SCANCODE(action_keymaps[key]);
+			else
+				pDevice->functionRowKeys[i] = 0;
 		}
 	}
 
