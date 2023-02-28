@@ -46,8 +46,14 @@ crosecvivaldi.sys  = 1,,
 [CrosEcVivaldi_Device.NT]
 CopyFiles=Drivers_Dir
 
+[CrosEcVivaldi_Device.NT.HW]
+AddReg=CrosEcVivaldi_AddReg
+
 [Drivers_Dir]
 crosecvivaldi.sys
+
+[CrosEcVivaldi_AddReg]
+HKR,,"UpperFilters",0x00010000,"mshidkmdf"
 
 ;-------------- Service installation
 [CrosEcVivaldi_Device.NT.Services]
@@ -66,5 +72,5 @@ LoadOrderGroup = Base
 SPSVCINST_ASSOCSERVICE= 0x00000002
 StdMfg                 = "CoolStar"
 DiskId1                = "Chrome EC Vivaldi Installation Disk #1"
-CrosEcVivaldi.DeviceDesc = "Chromebook Vivaldi Settings"
+CrosEcVivaldi.DeviceDesc = "Chromebook Keyboard Settings & Buttons"
 CrosEcVivaldi.SVCDESC    = "Chrome EC Vivaldi Service"

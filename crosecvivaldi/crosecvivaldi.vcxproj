@@ -164,6 +164,7 @@
   <ItemGroup>
     <ClInclude Include="driver.h" />
     <ClInclude Include="crosecvivaldi.h" />
+    <ClInclude Include="hidcommon.h" />
     <ClInclude Include="trace.h" />
   </ItemGroup>
   <ItemGroup>
