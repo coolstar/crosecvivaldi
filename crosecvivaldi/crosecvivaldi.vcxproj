@@ -165,10 +165,14 @@
     <ClInclude Include="driver.h" />
     <ClInclude Include="crosecvivaldi.h" />
     <ClInclude Include="hidcommon.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="trace.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="crosecvivaldi.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="crosecvivaldi.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
