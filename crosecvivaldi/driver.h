@@ -136,6 +136,7 @@ typedef enum {
     CSVivaldiRequestUpdateButton = 0x101
 } CSVivaldiRequest;
 
+#include <pshpack1.h>
 typedef struct CSVivaldiSettingsArg {
     UINT32 argSz;
     CSVivaldiRequest settingsRequest;
@@ -149,6 +150,7 @@ typedef struct CSVivaldiSettingsArg {
         } button;
     } args;
 } CSVivaldiSettingsArg, * PCSVivaldiSettingsArg;
+#include <poppack.h>
 
 typedef struct _CROSECVIVALDI_CONTEXT
 {
