@@ -18,6 +18,12 @@ DriverEntry(
 	CrosEcVivaldiPrint(DEBUG_LEVEL_INFO, DBG_INIT,
 		"Driver Entry\n");
 
+	//
+	//  Default to NonPagedPoolNx for non paged pool allocations where supported.
+	//
+
+	ExInitializeDriverRuntime(DrvRtPoolNxOptIn);
+
 	WDF_DRIVER_CONFIG_INIT(&config, CrosEcVivaldiEvtDeviceAdd);
 
 	WDF_OBJECT_ATTRIBUTES_INIT(&attributes);
