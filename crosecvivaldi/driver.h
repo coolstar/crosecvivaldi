@@ -156,6 +156,8 @@ typedef struct _CROSECVIVALDI_CONTEXT
 {
     WDFQUEUE ReportQueue;
 
+    WDFQUEUE IdleQueue;
+
     //
     // Handle back to the WDFDEVICE
     //
@@ -175,6 +177,21 @@ typedef struct _CROSECVIVALDI_CONTEXT
 } CROSECVIVALDI_CONTEXT, * PCROSECVIVALDI_CONTEXT;
 
 WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(CROSECVIVALDI_CONTEXT, GetDeviceContext)
+
+//
+// Power Idle Workitem context
+// 
+typedef struct _IDLE_WORKITEM_CONTEXT
+{
+    // Handle to a WDF device object
+    WDFDEVICE FxDevice;
+
+    // Handle to a WDF request object
+    WDFREQUEST FxRequest;
+
+} IDLE_WORKITEM_CONTEXT, * PIDLE_WORKITEM_CONTEXT;
+WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(IDLE_WORKITEM_CONTEXT, GetIdleWorkItemContext)
+
 
 //
 // Function definitions
@@ -234,6 +251,11 @@ CrosEcVivaldiReadReport(
 PCHAR
 DbgHidInternalIoctlString(
 	IN ULONG        IoControlCode
+);
+
+VOID
+CrosEcVivaldiCompleteIdleIrp(
+    IN PCROSECVIVALDI_CONTEXT FxDeviceContext
 );
 
 //
